@@ -14,6 +14,17 @@ class MovieDbDatasource extends MoviesDatasource {
     },
   ));
 
+  List<Movie> _jsonToMovies(Map<String,dynamic> json) {
+    final movieDbResponse = MovieDbResponse.fromJson(json);
+    
+    final List<Movie> movies = movieDbResponse.results
+        .where((moviedb) => moviedb.posterPath != 'no-poster')
+        .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
+        .toList();
+
+    return movies;
+  }
+
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
     final response = await dio.get(
@@ -23,15 +34,42 @@ class MovieDbDatasource extends MoviesDatasource {
       },
     );
 
-    final movieDbResponse = MovieDbResponse.fromJson(response.data);
+    return _jsonToMovies(response.data);
+  }
 
-// Mapeo la info de la api a mi modelo de datos que quiero usar mediante mi mapper.
-// El where es para que si no se cumple esta condición no se crea esa pelicula.
-    final List<Movie> movies = movieDbResponse.results
-        .where((moviedb) => moviedb.posterPath != 'no-poster')
-        .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
-        .toList();
+  @override
+  Future<List<Movie>> getPopular({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/popular',
+      queryParameters: {
+        'page': page,
+      },
+    );
 
-    return movies;
+    return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getTopRated({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/top_rated',
+      queryParameters: {
+        'page': page,
+      },
+    );
+
+    return _jsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getUpcoming({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/upcoming',
+      queryParameters: {
+        'page': page,
+      },
+    );
+
+    return _jsonToMovies(response.data);
   }
 }
