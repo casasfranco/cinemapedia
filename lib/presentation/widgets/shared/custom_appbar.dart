@@ -31,16 +31,16 @@ class CustomAppbar extends ConsumerWidget {
                   final searchQuery = ref.read(searchQueryProvider);
 
                   showSearch<Movie?>(
-                    query: searchQuery,
-                    context: context,
-                    delegate: SearchMovieDelegate(
-                        initialMovies: searchedMovies,
-                        searchMovies: ref
-                            .read(searchedMoviesProvider.notifier)
-                            .searchMoviesByQuery),
-                  ).then((movie) {
+                          query: searchQuery,
+                          context: context,
+                          delegate: SearchMovieDelegate(
+                              initialMovies: searchedMovies,
+                              searchMovies: ref
+                                  .read(searchedMoviesProvider.notifier)
+                                  .searchMoviesByQuery))
+                      .then((movie) {
                     if (movie == null) return;
-                    context.push('/movie/${movie.id}');
+                    context.push('/home/0/movie/${movie.id}');
                   });
                 },
                 icon: const Icon(Icons.search)),
